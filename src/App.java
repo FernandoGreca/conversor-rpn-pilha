@@ -21,17 +21,12 @@ public class App {
     }
 
     private static void calcular(String expressao) {
-        try {
-            List<String> rpn = converterParaRpn(expressao);
-            double resultado = avaliarRpn(rpn);
+        List<String> rpn = converterParaRpn(expressao);
+        double resultado = avaliarRpn(rpn);
 
-            System.out.println("\nExpressao original: " + expressao);
-            System.out.println("Expressao em RPN:    " + String.join(" ", rpn));
-            System.out.println("Resultado:           " + resultado);
-        } catch (IllegalArgumentException | ArithmeticException e) {
-            System.out.println("\nExpressao original: " + expressao);
-            System.out.println("Erro: " + e.getMessage());
-        }
+        System.out.println("\nExpressao original: " + expressao);
+        System.out.println("Expressao em RPN:    " + String.join(" ", rpn));
+        System.out.println("Resultado:           " + resultado);
     }
 
     /** Aplica o algoritmo Shunting-yard para produzir a Notacao Polonesa Reversa. */
@@ -39,60 +34,29 @@ public class App {
         List<String> saida = new ArrayList<>();
         Stack<String> operadores = new Stack<>();
         List<String> tokens = tokenizar(expressao);
-        boolean esperaOperando = true;
 
         for (String token : tokens) {
             if (ehNumero(token)) {
-                if (!esperaOperando) {
-                    throw new IllegalArgumentException("Falta um operador entre os numeros.");
-                }
                 saida.add(token);
-                esperaOperando = false;
             } else if (ehOperador(token)) {
-                if (esperaOperando) {
-                    throw new IllegalArgumentException("Operador sem operando: " + token);
-                }
                 while (!operadores.empty()
                         && ehOperador(operadores.peek())
                         && precedencia(operadores.peek()) >= precedencia(token)) {
                     saida.add(operadores.pop());
                 }
                 operadores.push(token);
-                esperaOperando = true;
             } else if (token.equals("(")) {
-                if (!esperaOperando) {
-                    throw new IllegalArgumentException("Falta um operador antes de '('.");
-                }
                 operadores.push(token);
             } else if (token.equals(")")) {
-                if (esperaOperando) {
-                    throw new IllegalArgumentException("Parenteses sem expressao valida.");
+                while (!operadores.peek().equals("(")) {
+                    saida.add(operadores.pop());
                 }
-                boolean encontrouAbertura = false;
-                while (!operadores.empty()) {
-                    String operador = operadores.pop();
-                    if (operador.equals("(")) {
-                        encontrouAbertura = true;
-                        break;
-                    }
-                    saida.add(operador);
-                }
-                if (!encontrouAbertura) {
-                    throw new IllegalArgumentException("Parenteses desbalanceados.");
-                }
+                operadores.pop();
             }
-        }
-
-        if (tokens.isEmpty() || esperaOperando) {
-            throw new IllegalArgumentException("A expressao termina com um operador ou esta vazia.");
         }
 
         while (!operadores.empty()) {
-            String operador = operadores.pop();
-            if (operador.equals("(")) {
-                throw new IllegalArgumentException("Parenteses desbalanceados.");
-            }
-            saida.add(operador);
+            saida.add(operadores.pop());
         }
         return saida;
     }
@@ -107,33 +71,25 @@ public class App {
                 continue;
             }
 
-            if (valores.size() < 2) {
-                throw new IllegalArgumentException("Expressao RPN invalida.");
-            }
             double segundoOperando = valores.pop();
             double primeiroOperando = valores.pop();
             valores.push(aplicarOperador(token, primeiroOperando, segundoOperando));
         }
 
-        if (valores.size() != 1) {
-            throw new IllegalArgumentException("Expressao RPN invalida.");
-        }
         return valores.pop();
     }
 
     private static double aplicarOperador(String operador, double a, double b) {
-        return switch (operador) {
-            case "+" -> a + b;
-            case "-" -> a - b;
-            case "*" -> a * b;
-            case "/" -> {
-                if (b == 0.0) {
-                    throw new ArithmeticException("Divisao por zero nao permitida.");
-                }
-                yield a / b;
-            }
-            default -> throw new IllegalArgumentException("Operador invalido: " + operador);
-        };
+        if (operador.equals("+")) {
+            return a + b;
+        }
+        if (operador.equals("-")) {
+            return a - b;
+        }
+        if (operador.equals("*")) {
+            return a * b;
+        }
+        return a / b;
     }
 
     private static List<String> tokenizar(String expressao) {
@@ -167,7 +123,7 @@ public class App {
                 tokens.add(String.valueOf(caractere));
                 indice++;
             } else {
-                throw new IllegalArgumentException("Caractere invalido: " + caractere);
+                indice++;
             }
         }
         return tokens;

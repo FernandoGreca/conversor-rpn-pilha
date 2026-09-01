@@ -9,7 +9,8 @@ Aplicacao Java de console que recebe expressoes matematicas em notacao infixa, a
 - Parenteses e precedencia de operadores;
 - Conversao pelo algoritmo *Shunting-yard*;
 - Conversao e avaliacao com a classe `java.util.Stack` da biblioteca padrao do Java;
-- Mensagens para expressoes invalidas, parenteses desbalanceados e divisao por zero.
+
+O programa considera que as expressoes de teste fornecidas estao na notacao infixa correta.
 
 ## Como executar
 
