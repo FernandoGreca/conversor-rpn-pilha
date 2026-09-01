@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** Converte expressoes aritmeticas da notacao infixa para RPN e as avalia. */
@@ -19,9 +18,7 @@ public class App {
     public static void main(String[] args) {
         System.out.println("=== Conversor de expressao infixa para RPN ===");
         System.out.println("\nCinco casos de teste:");
-        for (String exemplo : EXEMPLOS) {
-            calcular(exemplo);
-        }
+        for (String exemplo : EXEMPLOS) calcular(exemplo);
     }
 
     private static void calcular(String expressao) {
@@ -84,26 +81,16 @@ public class App {
     }
 
     private static double aplicarOperador(String operador, double a, double b) {
-        if (operador.equals("+")) {
-            return a + b;
-        }
-        if (operador.equals("-")) {
-            return a - b;
-        }
-        if (operador.equals("*")) {
-            return a * b;
-        }
-        return a / b;
+        return switch (operador) {
+            case "+" -> a + b;
+            case "-" -> a - b;
+            case "*" -> a * b;
+            default -> a / b;
+        };
     }
 
     private static List<String> tokenizar(String expressao) {
-        List<String> tokens = new ArrayList<>();
-        Matcher matcher = TOKEN.matcher(expressao);
-
-        while (matcher.find()) {
-            tokens.add(matcher.group());
-        }
-        return tokens;
+        return TOKEN.matcher(expressao).results().map(resultado -> resultado.group()).toList();
     }
 
     private static boolean ehNumero(String token) {
@@ -111,7 +98,7 @@ public class App {
     }
 
     private static boolean ehOperador(String token) {
-        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
+        return "+-*/".contains(token);
     }
 
     private static int precedencia(String operador) {
