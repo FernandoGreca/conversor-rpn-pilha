@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /** Converte expressoes aritmeticas da notacao infixa para RPN e as avalia. */
 public class App {
@@ -36,7 +37,7 @@ public class App {
     /** Aplica o algoritmo Shunting-yard para produzir a Notacao Polonesa Reversa. */
     public static List<String> converterParaRpn(String expressao) {
         List<String> saida = new ArrayList<>();
-        Pilha<String> operadores = new Pilha<>();
+        Stack<String> operadores = new Stack<>();
         List<String> tokens = tokenizar(expressao);
         boolean esperaOperando = true;
 
@@ -51,25 +52,25 @@ public class App {
                 if (esperaOperando) {
                     throw new IllegalArgumentException("Operador sem operando: " + token);
                 }
-                while (!operadores.estaVazia()
-                        && ehOperador(operadores.topo())
-                        && precedencia(operadores.topo()) >= precedencia(token)) {
-                    saida.add(operadores.desempilhar());
+                while (!operadores.empty()
+                        && ehOperador(operadores.peek())
+                        && precedencia(operadores.peek()) >= precedencia(token)) {
+                    saida.add(operadores.pop());
                 }
-                operadores.empilhar(token);
+                operadores.push(token);
                 esperaOperando = true;
             } else if (token.equals("(")) {
                 if (!esperaOperando) {
                     throw new IllegalArgumentException("Falta um operador antes de '('.");
                 }
-                operadores.empilhar(token);
+                operadores.push(token);
             } else if (token.equals(")")) {
                 if (esperaOperando) {
                     throw new IllegalArgumentException("Parenteses sem expressao valida.");
                 }
                 boolean encontrouAbertura = false;
-                while (!operadores.estaVazia()) {
-                    String operador = operadores.desempilhar();
+                while (!operadores.empty()) {
+                    String operador = operadores.pop();
                     if (operador.equals("(")) {
                         encontrouAbertura = true;
                         break;
@@ -86,8 +87,8 @@ public class App {
             throw new IllegalArgumentException("A expressao termina com um operador ou esta vazia.");
         }
 
-        while (!operadores.estaVazia()) {
-            String operador = operadores.desempilhar();
+        while (!operadores.empty()) {
+            String operador = operadores.pop();
             if (operador.equals("(")) {
                 throw new IllegalArgumentException("Parenteses desbalanceados.");
             }
@@ -98,26 +99,26 @@ public class App {
 
     /** Avalia uma expressao em RPN usando uma pilha de valores double. */
     public static double avaliarRpn(List<String> rpn) {
-        Pilha<Double> valores = new Pilha<>();
+        Stack<Double> valores = new Stack<>();
 
         for (String token : rpn) {
             if (ehNumero(token)) {
-                valores.empilhar(Double.parseDouble(token));
+                valores.push(Double.parseDouble(token));
                 continue;
             }
 
-            if (valores.tamanho() < 2) {
+            if (valores.size() < 2) {
                 throw new IllegalArgumentException("Expressao RPN invalida.");
             }
-            double segundoOperando = valores.desempilhar();
-            double primeiroOperando = valores.desempilhar();
-            valores.empilhar(aplicarOperador(token, primeiroOperando, segundoOperando));
+            double segundoOperando = valores.pop();
+            double primeiroOperando = valores.pop();
+            valores.push(aplicarOperador(token, primeiroOperando, segundoOperando));
         }
 
-        if (valores.tamanho() != 1) {
+        if (valores.size() != 1) {
             throw new IllegalArgumentException("Expressao RPN invalida.");
         }
-        return valores.desempilhar();
+        return valores.pop();
     }
 
     private static double aplicarOperador(String operador, double a, double b) {
@@ -184,34 +185,4 @@ public class App {
         return (operador.equals("*") || operador.equals("/")) ? 2 : 1;
     }
 
-    /** Implementacao simples de pilha, usada tanto na conversao quanto no calculo. */
-    private static class Pilha<T> {
-        private final List<T> elementos = new ArrayList<>();
-
-        void empilhar(T elemento) {
-            elementos.add(elemento);
-        }
-
-        T desempilhar() {
-            if (estaVazia()) {
-                throw new IllegalArgumentException("Tentativa de remover de uma pilha vazia.");
-            }
-            return elementos.remove(elementos.size() - 1);
-        }
-
-        T topo() {
-            if (estaVazia()) {
-                throw new IllegalArgumentException("Tentativa de consultar uma pilha vazia.");
-            }
-            return elementos.get(elementos.size() - 1);
-        }
-
-        boolean estaVazia() {
-            return elementos.isEmpty();
-        }
-
-        int tamanho() {
-            return elementos.size();
-        }
-    }
 }

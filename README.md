@@ -8,7 +8,7 @@ Aplicacao Java de console que recebe expressoes matematicas em notacao infixa, a
 - Operadores `+`, `-`, `*` e `/`;
 - Parenteses e precedencia de operadores;
 - Conversao pelo algoritmo *Shunting-yard*;
-- Avaliacao da RPN com uma pilha generica implementada no proprio projeto;
+- Conversao e avaliacao com a classe `java.util.Stack` da biblioteca padrao do Java;
 - Mensagens para expressoes invalidas, parenteses desbalanceados e divisao por zero.
 
 ## Como executar
