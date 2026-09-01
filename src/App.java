@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /** Converte expressoes aritmeticas da notacao infixa para RPN e as avalia. */
 public class App {
@@ -13,35 +12,10 @@ public class App {
     };
 
     public static void main(String[] args) {
-        if (args.length > 0) {
-            calcular(String.join(" ", args));
-            return;
-        }
-
         System.out.println("=== Conversor de expressao infixa para RPN ===");
-        System.out.println("\nExemplos de teste:");
+        System.out.println("\nCinco casos de teste:");
         for (String exemplo : EXEMPLOS) {
             calcular(exemplo);
-        }
-
-        System.out.println("Digite uma expressao ou 'sair' para encerrar.");
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                System.out.print("> ");
-                if (!scanner.hasNextLine()) {
-                    break;
-                }
-
-                String expressao = scanner.nextLine().trim();
-                if (expressao.equalsIgnoreCase("sair")) {
-                    break;
-                }
-                if (expressao.isEmpty()) {
-                    System.out.println("Digite uma expressao valida.");
-                    continue;
-                }
-                calcular(expressao);
-            }
         }
     }
 

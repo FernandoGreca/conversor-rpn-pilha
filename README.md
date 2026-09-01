@@ -20,11 +20,7 @@ javac -d bin src/App.java
 java -cp bin App
 ```
 
-Tambem e possivel passar uma expressao diretamente pela linha de comando:
-
-```bash
-java -cp bin App "(12.5 + 7.5) * 2"
-```
+A execucao apresenta diretamente os cinco casos de teste definidos no codigo.
 
 ## Cinco expressoes usadas nos testes
 
