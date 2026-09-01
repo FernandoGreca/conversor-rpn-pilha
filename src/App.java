@@ -1,9 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Converte expressoes aritmeticas da notacao infixa para RPN e as avalia. */
 public class App {
+    private static final Pattern TOKEN = Pattern.compile("(?:\\d+(?:\\.\\d+)?|\\.\\d+)|[()+\\-*/]");
+
     private static final String[] EXEMPLOS = {
         "3 + 4 * 2 / (1 - 5)",
         "(12.5 + 7.5) * 2",
@@ -94,37 +98,10 @@ public class App {
 
     private static List<String> tokenizar(String expressao) {
         List<String> tokens = new ArrayList<>();
-        int indice = 0;
+        Matcher matcher = TOKEN.matcher(expressao);
 
-        while (indice < expressao.length()) {
-            char caractere = expressao.charAt(indice);
-            if (Character.isWhitespace(caractere)) {
-                indice++;
-            } else if (Character.isDigit(caractere) || caractere == '.') {
-                int inicio = indice;
-                boolean encontrouPonto = false;
-                while (indice < expressao.length()) {
-                    char atual = expressao.charAt(indice);
-                    if (Character.isDigit(atual)) {
-                        indice++;
-                    } else if (atual == '.' && !encontrouPonto) {
-                        encontrouPonto = true;
-                        indice++;
-                    } else {
-                        break;
-                    }
-                }
-                String numero = expressao.substring(inicio, indice);
-                if (numero.equals(".")) {
-                    throw new IllegalArgumentException("Numero decimal invalido.");
-                }
-                tokens.add(numero);
-            } else if (ehOperador(String.valueOf(caractere)) || caractere == '(' || caractere == ')') {
-                tokens.add(String.valueOf(caractere));
-                indice++;
-            } else {
-                indice++;
-            }
+        while (matcher.find()) {
+            tokens.add(matcher.group());
         }
         return tokens;
     }

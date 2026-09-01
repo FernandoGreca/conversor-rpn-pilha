@@ -35,7 +35,7 @@ A execucao apresenta diretamente os cinco casos de teste definidos no codigo.
 
 ## Etapas da solucao
 
-1. A expressao e separada em *tokens* (numeros, operadores e parenteses).
+1. Uma expressao regular separa a expressao em *tokens* (numeros, operadores e parenteses).
 2. Na conversao, os numeros vao para a saida; operadores ficam em uma pilha ate que sua precedencia permita envia-los para a saida.
 3. Ao encontrar `)`, os operadores sao retirados da pilha ate o `(` correspondente.
 4. Na avaliacao RPN, cada numero e empilhado. Ao encontrar um operador, os dois valores do topo sao retirados, a operacao e calculada e o resultado volta para a pilha.
