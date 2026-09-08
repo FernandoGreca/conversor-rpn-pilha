@@ -15,10 +15,25 @@ public class App {
         "7.2 * (3 - 1.5) + 4"
     };
 
+    private static final String[] EXPERIMENTOS_PONTO_FLUTUANTE = {
+    "0.1 + 0.2",
+    "0.1 + 0.1 + 0.1",
+    "(0.1 + 0.2) - 0.3",
+    "1.0 / 3.0",
+    "10000000000000000.0 + 1.0"
+    };
+
     public static void main(String[] args) {
         System.out.println("=== Conversor de expressao infixa para RPN ===");
         System.out.println("\nCinco casos de teste:");
         for (String exemplo : EXEMPLOS) calcular(exemplo);
+
+        System.out.println("\n=== Investigacao sobre ponto flutuante ===");
+
+        for (int i = 0; i < EXPERIMENTOS_PONTO_FLUTUANTE.length; i++) {
+        System.out.println("\n--- Experimento " + (i + 1) + " ---");
+        calcular(EXPERIMENTOS_PONTO_FLUTUANTE[i]);
+        }
     }
 
     private static void calcular(String expressao) {
